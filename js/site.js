@@ -31,7 +31,7 @@ $(function () {
         return 1; // scale mặc định cho desktop
     }
 
-    let pdfUrl = 'https://lehoangdung0609.github.io/sachdientu2/file/AN_PHAM_LUU_TRU_CAN_THO_XUA_VA_NAY_nen_4.pdf';
+    let pdfUrl = '/file/AN_PHAM_LUU_TRU_CAN_THO_XUA_VA_NAY_nen_4.pdf';
     let scale = getDeviceScale();
     let pdfDoc = null;
     let pagesRendered = {}; // Lưu trữ các trang đã render để tránh render lại
