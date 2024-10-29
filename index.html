@@ -1,3 +1,84 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:afeb8de4f95da6956d5f6638119f7a88d0c624edf1bc87c4dc693c400c42f756
-size 2268
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sách điện tử</title>
+</head>
+<body>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"/>
+
+<script type="text/javascript" src="/js/pdf.min.js"></script>
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background-image: url("img/bg.jpg");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    .magazine {
+        width: auto;
+        height: auto;
+        background: #fff;
+        display: flex;
+        justify-content: center !important;
+        align-items: center !important;
+        margin: auto;/* Tự động căn giữa */
+        border-radius: 10px 10px; /* Optional: thêm bo góc cho đẹp */
+        overflow: hidden;
+    }
+
+
+    /* CSS cho hiệu ứng loading */
+    .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%; /* Chiều cao bằng chiều cao trang */
+    }
+
+    .loader {
+        border: 5px solid #f3f3f3; /* Light grey */
+        border-top: 5px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .page {
+        width: 100%;
+        height: 100%;
+        background-color: #fff; /* Để trống trang */
+    }
+    
+</style>
+
+<div class="magazine">
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="js/turn.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+<script type="text/javascript" src="js/turn.js"></script>
+<script>
+    $(".magazine").turn({gradients: true, acceleration: true});
+</script>
+
+<script src="js/site.js"></script>
+</body>
+</html>
