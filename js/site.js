@@ -18,7 +18,7 @@ $(function () {
             console.warn("Trình duyệt không hỗ trợ khóa chiều xoay.");
         }
     }
-    
+
     function getDeviceScale() {
         let screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
@@ -42,7 +42,6 @@ $(function () {
             return;
         }
 
-        // Tạo một placeholder cho trang đang tải với hiệu ứng loading
         let pageDiv = document.createElement('div');
         pageDiv.className = 'page';
         pageDiv.innerHTML = '<div class="loading"><div class="loader"></div></div>'; // Hiển thị thông báo "Loading..."
@@ -80,6 +79,7 @@ $(function () {
             pages: totalPages,
             when: {
                 turning: function(event, page) {
+                    // Optionally, you can render additional pages as the user navigates
                     let pagesToRender = [page, page + 1];
                     pagesToRender.forEach(pageNum => {
                         if (pageNum <= totalPages && !pagesRendered[pageNum]) {
@@ -101,24 +101,22 @@ $(function () {
             let viewport = page.getViewport({ scale: scale });
             let pageWidth = viewport.width;
             let pageHeight = viewport.height;
+            // Render trang 1 trước tiên
+            /*renderPage(1, function(pageDiv) {
+                $('.magazine').append(pageDiv);
+            });*/
 
-            // Render và thêm hai trang đầu tiên vào Turn.js
-            renderPage(1, function(pageDiv) {
-                $('.magazine').append(pageDiv);
-            });
-            renderPage(2, function(pageDiv) {
-                $('.magazine').append(pageDiv);
-            });
+            // Render tất cả các trang ngay khi PDF được tải
+            for (let i = 3; i <= totalPages; i++) {
+                renderPage(i, function(pageDiv) {
+                    $('.magazine').append(pageDiv);
+                });
+            }
 
             // Khởi tạo Turn.js với kích thước và số lượng trang
             initTurnJSWithDimensions(pageWidth, pageHeight, totalPages);
 
-            // Chỉ render trang đầu tiên ban đầu, để trống các trang khác
-            renderPage(2, function(pageDiv) {
-                pagesRendered[2] = pageDiv;
-            });
-
-            $('.magazine').turn('page', 1); // Hiển thị trang 1 ban đầu
+            /*$('.magazine').turn('page', 1); // Hiển thị trang 1 ban đầu*/
         });
     });
 });
