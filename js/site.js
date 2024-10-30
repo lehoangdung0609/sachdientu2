@@ -2,39 +2,28 @@ $(function () {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
 
     function isTablet(screenWidth) {
-        return screenWidth >= 768 && screenWidth <= 1024; // Kiểm tra nếu là kích thước của iPad
+        return screenWidth >= 768 && screenWidth <= 1024;
     }
 
     function isMobile(screenWidth) {
-        return screenWidth < 768; // Kiểm tra nếu là kích thước của mobile
-    }
-
-    function lockOrientation() {
-        if (screen.orientation && screen.orientation.lock) {
-            screen.orientation.lock('landscape').catch(function(error) {
-                console.error("Không thể khóa chiều xoay: ", error);
-            });
-        } else {
-            console.warn("Trình duyệt không hỗ trợ khóa chiều xoay.");
-        }
+        return screenWidth < 768;
     }
 
     function getDeviceScale() {
         let screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
         if (isTablet(screenWidth)) {
-            return 0.7; // scale cho iPad
+            return 0.7;
         } else if (isMobile(screenWidth)) {
-            lockOrientation(); // Tự động xoay chiều ngang nếu là di động
-            return 0.5; // scale cho thiết bị di động
+            return 0.5;
         }
-        return 1; // scale mặc định cho desktop
+        return 1;
     }
 
     let pdfUrl = 'https://lehoangdung0609.github.io/sachdientu2/file/AN_PHAM_LUU_TRU_CAN_THO_XUA_VA_NAY_nen_4.pdf';
     let scale = getDeviceScale();
     let pdfDoc = null;
-    let pagesRendered = {}; // Lưu trữ các trang đã render để tránh render lại
+    let pagesRendered = {};
 
     function renderPage(pageNum, callback) {
         if (pagesRendered[pageNum]) {
@@ -44,7 +33,7 @@ $(function () {
 
         let pageDiv = document.createElement('div');
         pageDiv.className = 'page';
-        pageDiv.innerHTML = '<div class="loading"><div class="loader"></div></div>'; // Hiển thị thông báo "Loading..."
+        pageDiv.innerHTML = '<div class="loading"><div class="loader"></div></div>';
         callback(pageDiv);
 
         pdfDoc.getPage(pageNum).then(function(page) {
@@ -61,26 +50,36 @@ $(function () {
             };
 
             page.render(renderContext).promise.then(function() {
-                pageDiv.innerHTML = ''; // Xóa nội dung "Loading..." khi đã render xong
-                pageDiv.appendChild(canvas); // Thêm canvas vào pageDiv
-                pagesRendered[pageNum] = pageDiv; // Lưu trang đã render vào bộ nhớ cache
+                pageDiv.innerHTML = '';
+                pageDiv.appendChild(canvas);
+                pagesRendered[pageNum] = pageDiv;
             });
         });
     }
 
     function initTurnJSWithDimensions(pageWidth, pageHeight, totalPages) {
+        let screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        let isMobileDevice = isMobile(screenWidth);
+
         $('.magazine').turn({
-            width: pageWidth * 2,
+            width: isMobileDevice ? pageWidth : pageWidth * 2,
             height: pageHeight,
             autoCenter: true,
-            display: 'double',
+            display: isMobileDevice ? 'single' : 'double', // Hiển thị một trang trên mobile
             gradients: true,
             acceleration: true,
             pages: totalPages,
+            /*elevation: 50,
+            duration: 1000,*/
             when: {
                 turning: function(event, page) {
-                    // Optionally, you can render additional pages as the user navigates
-                    let pagesToRender = [page, page + 1];
+                    let pagesToRender;
+                    if (isMobileDevice) {
+                        pagesToRender = [page]; // Chỉ render một trang trên mobile
+                    } else {
+                        pagesToRender = [page, page + 1];
+                    }
+
                     pagesToRender.forEach(pageNum => {
                         if (pageNum <= totalPages && !pagesRendered[pageNum]) {
                             renderPage(pageNum, function(pageDiv) {
@@ -88,6 +87,9 @@ $(function () {
                             });
                         }
                     });
+                },
+                turned: function(event, page) {
+                    $(this).turn('center');
                 }
             }
         });
@@ -101,10 +103,6 @@ $(function () {
             let viewport = page.getViewport({ scale: scale });
             let pageWidth = viewport.width;
             let pageHeight = viewport.height;
-            // Render trang 1 trước tiên
-            /*renderPage(1, function(pageDiv) {
-                $('.magazine').append(pageDiv);
-            });*/
 
             // Render tất cả các trang ngay khi PDF được tải
             for (let i = 3; i <= totalPages; i++) {
@@ -113,10 +111,19 @@ $(function () {
                 });
             }
 
-            // Khởi tạo Turn.js với kích thước và số lượng trang
             initTurnJSWithDimensions(pageWidth, pageHeight, totalPages);
-
-            /*$('.magazine').turn('page', 1); // Hiển thị trang 1 ban đầu*/
         });
+    });
+
+    // Xử lý sự kiện thay đổi kích thước màn hình
+    $(window).resize(function() {
+        let screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        if ($('.magazine').turn('is')) {
+            $('.magazine').turn('display', isMobile(screenWidth) ? 'single' : 'double');
+            $('.magazine').turn('size',
+                isMobile(screenWidth) ? $('.magazine').width() / 2 : $('.magazine').width(),
+                $('.magazine').height()
+            );
+        }
     });
 });
