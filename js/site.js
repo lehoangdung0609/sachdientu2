@@ -60,7 +60,7 @@ $(function () {
         if (isTablet(screenWidth)) {
             return 0.7;
         } else if (isMobile(screenWidth)) {
-            return 0.5;
+            return 0.63;
         }
         return 1;
     }
