@@ -33,6 +33,37 @@ $(function () {
         width: flipbookWidth,
         height: flipbookHeight,
         autoCenter: true,
-        display: displayMode
+        display: displayMode,
+        gradients: true, // Thêm tùy chọn gradients
+        when: {
+            ready: function() {
+                $(this).turn('peel', 'br'); // Lật trang đầu tiên về bên phải
+            }
+        },
+        tap: function(event) {
+            var flipbook = $(this);
+            if (flipbook.turn('page') == 1) {
+                flipbook.turn('next'); // Lật sang trang tiếp theo nếu đang ở trang đầu
+            } else if (flipbook.turn('page') == flipbook.turn('pages')){
+                flipbook.turn('previous'); // Lật về trang trước nếu đang ở trang cuối
+            } else {
+                var isRight = (event.pageX - flipbook.offset().left) > flipbook.width()/2;
+                if (isRight) {
+                    flipbook.turn('next');
+                } else {
+                    flipbook.turn('previous');
+                }
+            }
+
+        }
     });
+
+    var hammertime = new Hammer(document.getElementById('flipbook')); // Sử dụng Hammer.js
+    hammertime.on('swipeleft', function(ev) {
+        $('#flipbook').turn('next');
+    });
+    hammertime.on('swiperight', function(ev) {
+        $('#flipbook').turn('previous');
+    });
+    
 });
