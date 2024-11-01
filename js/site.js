@@ -22,9 +22,13 @@ $(function () {
         flipbookWidth = availableHeight * pdfRatio;
     }
 
+    var isMobile = window.innerWidth <= 768;
+    var displayMode = isMobile ? 'single' : 'double';
+
     $("#flipbook").turn({
         width: flipbookWidth,
         height: flipbookHeight,
-        autoCenter: true
+        autoCenter: true,
+        display: displayMode
     });
 });
