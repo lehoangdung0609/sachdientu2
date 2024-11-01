@@ -8,35 +8,45 @@
     <script src="https://hammerjs.github.io/dist/hammer.min.js"></script>
     <script type="text/javascript" src="js/turn.js"></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-image: url("img/bg.jpg");
-            overflow: hidden;
-            background-size: cover;
-            background-repeat: no-repeat;
+        html, body {
+            height: 100%; /* Ensure both html and body take full height */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
         }
+
+        body {
+            background-image: url("img/bg.jpg");
+            background-size: cover; /* Background image will cover the entire body */
+            background-repeat: no-repeat; /* Prevent repeating */
+            background-position: center; /* Center the background image */
+            overflow: hidden; /* Prevent scrolling */
+        }
+
         .magazine-viewport {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 100%; /* Ensure it covers the whole height of the viewport */
             display: flex;
             justify-content: center;
             align-items: center;
         }
+
         .magazine {
-            margin: 0 auto;
+            margin: 0 auto; /* Center the magazine */
         }
+
         .page {
-            background-color: white;
+            background-color: white; /* White background for pages */
         }
+
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: contain; /* Maintain aspect ratio of the images */
         }
+
         #loading-screen {
             position: fixed;
             top: 0;
@@ -49,6 +59,7 @@
             align-items: center;
             z-index: 9999;
         }
+
         .spinner {
             width: 50px;
             height: 50px;
@@ -58,6 +69,7 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
