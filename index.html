@@ -2,83 +2,170 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sách điện tử</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Viewer</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="js/turn.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+            overflow: hidden;
+        }
+        .magazine-viewport {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+        }
+        .magazine {
+            margin: 0 auto;
+        }
+        .page {
+            background-color: white;
+        }
+        .page img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-
-<link href="https://lehoangdung0609.github.io/sachdientu2/js/bootstrap.min.css"/>
-
-<!--<script type="text/javascript" src="https://lehoangdung0609.github.io/sachdientu2/js/pdf.min.js"></script>-->
-<style>
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        background-image: url("img/bg.jpg");
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-    }
-
-    .magazine {
-        width: auto;
-        height: auto;
-        background: #fff;
-        display: flex;
-        justify-content: center !important;
-        align-items: center !important;
-        margin: auto;/* Tự động căn giữa */
-        border-radius: 10px 10px; /* Optional: thêm bo góc cho đẹp */
-        overflow: hidden;
-    }
-
-
-    /* CSS cho hiệu ứng loading */
-    .loading {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%; /* Chiều cao bằng chiều cao trang */
-    }
-
-    .loader {
-        border: 5px solid #f3f3f3; /* Light grey */
-        border-top: 5px solid #3498db; /* Blue */
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        animation: spin 2s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    .page {
-        width: 100%;
-        height: 100%;
-        background-color: #fff; /* Để trống trang */
-    }
-    
-</style>
-
-<div class="magazine">
-
+<!--<div id="loading-screen">
+    <div style="text-align: center;">
+        <div class="spinner"></div>
+        <div style="font-size: 18px; color: #333;">Đang tải...</div>
+    </div>
+</div>-->
+<div class="magazine-viewport">
+    <div class="magazine" id="flipbook">
+        <div class="page"><img src="img/images_0.jpg" alt="Page 0"></div>
+        <div class="page"><img src="img/images_1.jpg" alt="Page 1"></div>
+        <div class="page"><img src="img/images_2.jpg" alt="Page 2"></div>
+        <div class="page"><img src="img/images_3.jpg" alt="Page 3"></div>
+        <div class="page"><img src="img/images_4.jpg" alt="Page 4"></div>
+        <div class="page"><img src="img/images_5.jpg" alt="Page 5"></div>
+        <div class="page"><img src="img/images_6.jpg" alt="Page 6"></div>
+        <div class="page"><img src="img/images_7.jpg" alt="Page 7"></div>
+        <div class="page"><img src="img/images_8.jpg" alt="Page 8"></div>
+        <div class="page"><img src="img/images_9.jpg" alt="Page 9"></div>
+        <div class="page"><img src="img/images_10.jpg" alt="Page 10"></div>
+        <div class="page"><img src="img/images_11.jpg" alt="Page 11"></div>
+        <div class="page"><img src="img/images_12.jpg" alt="Page 12"></div>
+        <div class="page"><img src="img/images_13.jpg" alt="Page 13"></div>
+        <div class="page"><img src="img/images_14.jpg" alt="Page 14"></div>
+        <div class="page"><img src="img/images_15.jpg" alt="Page 15"></div>
+        <div class="page"><img src="img/images_16.jpg" alt="Page 16"></div>
+        <div class="page"><img src="img/images_17.jpg" alt="Page 17"></div>
+        <div class="page"><img src="img/images_18.jpg" alt="Page 18"></div>
+        <div class="page"><img src="img/images_19.jpg" alt="Page 19"></div>
+        <div class="page"><img src="img/images_20.jpg" alt="Page 20"></div>
+        <div class="page"><img src="img/images_21.jpg" alt="Page 21"></div>
+        <div class="page"><img src="img/images_22.jpg" alt="Page 22"></div>
+        <div class="page"><img src="img/images_23.jpg" alt="Page 23"></div>
+        <div class="page"><img src="img/images_24.jpg" alt="Page 24"></div>
+        <div class="page"><img src="img/images_25.jpg" alt="Page 25"></div>
+        <div class="page"><img src="img/images_26.jpg" alt="Page 26"></div>
+        <div class="page"><img src="img/images_27.jpg" alt="Page 27"></div>
+        <div class="page"><img src="img/images_28.jpg" alt="Page 28"></div>
+        <div class="page"><img src="img/images_29.jpg" alt="Page 29"></div>
+        <div class="page"><img src="img/images_30.jpg" alt="Page 30"></div>
+        <div class="page"><img src="img/images_31.jpg" alt="Page 31"></div>
+        <div class="page"><img src="img/images_32.jpg" alt="Page 32"></div>
+        <div class="page"><img src="img/images_33.jpg" alt="Page 33"></div>
+        <div class="page"><img src="img/images_34.jpg" alt="Page 34"></div>
+        <div class="page"><img src="img/images_35.jpg" alt="Page 35"></div>
+        <div class="page"><img src="img/images_36.jpg" alt="Page 36"></div>
+        <div class="page"><img src="img/images_37.jpg" alt="Page 37"></div>
+        <div class="page"><img src="img/images_38.jpg" alt="Page 38"></div>
+        <div class="page"><img src="img/images_39.jpg" alt="Page 39"></div>
+        <div class="page"><img src="img/images_40.jpg" alt="Page 40"></div>
+        <div class="page"><img src="img/images_41.jpg" alt="Page 41"></div>
+        <div class="page"><img src="img/images_42.jpg" alt="Page 42"></div>
+        <div class="page"><img src="img/images_43.jpg" alt="Page 43"></div>
+        <div class="page"><img src="img/images_44.jpg" alt="Page 44"></div>
+        <div class="page"><img src="img/images_45.jpg" alt="Page 45"></div>
+        <div class="page"><img src="img/images_46.jpg" alt="Page 46"></div>
+        <div class="page"><img src="img/images_47.jpg" alt="Page 47"></div>
+        <div class="page"><img src="img/images_48.jpg" alt="Page 48"></div>
+        <div class="page"><img src="img/images_49.jpg" alt="Page 49"></div>
+        <div class="page"><img src="img/images_50.jpg" alt="Page 50"></div>
+        <div class="page"><img src="img/images_51.jpg" alt="Page 51"></div>
+        <div class="page"><img src="img/images_52.jpg" alt="Page 52"></div>
+        <div class="page"><img src="img/images_53.jpg" alt="Page 53"></div>
+        <div class="page"><img src="img/images_54.jpg" alt="Page 54"></div>
+        <div class="page"><img src="img/images_55.jpg" alt="Page 55"></div>
+        <div class="page"><img src="img/images_56.jpg" alt="Page 56"></div>
+        <div class="page"><img src="img/images_57.jpg" alt="Page 57"></div>
+        <div class="page"><img src="img/images_58.jpg" alt="Page 58"></div>
+        <div class="page"><img src="img/images_59.jpg" alt="Page 59"></div>
+        <div class="page"><img src="img/images_60.jpg" alt="Page 60"></div>
+        <div class="page"><img src="img/images_61.jpg" alt="Page 61"></div>
+        <div class="page"><img src="img/images_62.jpg" alt="Page 62"></div>
+        <div class="page"><img src="img/images_63.jpg" alt="Page 63"></div>
+        <div class="page"><img src="img/images_64.jpg" alt="Page 64"></div>
+        <div class="page"><img src="img/images_65.jpg" alt="Page 65"></div>
+        <div class="page"><img src="img/images_66.jpg" alt="Page 66"></div>
+        <div class="page"><img src="img/images_67.jpg" alt="Page 67"></div>
+        <div class="page"><img src="img/images_68.jpg" alt="Page 68"></div>
+        <div class="page"><img src="img/images_69.jpg" alt="Page 69"></div>
+        <div class="page"><img src="img/images_70.jpg" alt="Page 70"></div>
+        <div class="page"><img src="img/images_71.jpg" alt="Page 71"></div>
+        <div class="page"><img src="img/images_72.jpg" alt="Page 72"></div>
+        <div class="page"><img src="img/images_73.jpg" alt="Page 73"></div>
+        <div class="page"><img src="img/images_74.jpg" alt="Page 74"></div>
+        <div class="page"><img src="img/images_75.jpg" alt="Page 75"></div>
+        <div class="page"><img src="img/images_76.jpg" alt="Page 76"></div>
+        <div class="page"><img src="img/images_77.jpg" alt="Page 77"></div>
+        <div class="page"><img src="img/images_78.jpg" alt="Page 78"></div>
+        <div class="page"><img src="img/images_79.jpg" alt="Page 79"></div>
+        <div class="page"><img src="img/images_80.jpg" alt="Page 80"></div>
+        <div class="page"><img src="img/images_81.jpg" alt="Page 81"></div>
+        <div class="page"><img src="img/images_82.jpg" alt="Page 82"></div>
+        <div class="page"><img src="img/images_83.jpg" alt="Page 83"></div>
+        <div class="page"><img src="img/images_84.jpg" alt="Page 84"></div>
+        <div class="page"><img src="img/images_85.jpg" alt="Page 85"></div>
+        <div class="page"><img src="img/images_86.jpg" alt="Page 86"></div>
+        <div class="page"><img src="img/images_87.jpg" alt="Page 87"></div>
+        <div class="page"><img src="img/images_88.jpg" alt="Page 88"></div>
+        <div class="page"><img src="img/images_89.jpg" alt="Page 89"></div>
+        <div class="page"><img src="img/images_90.jpg" alt="Page 90"></div>
+        <div class="page"><img src="img/images_91.jpg" alt="Page 91"></div>
+        <div class="page"><img src="img/images_92.jpg" alt="Page 92"></div>
+        <div class="page"><img src="img/images_93.jpg" alt="Page 93"></div>
+        <div class="page"><img src="img/images_94.jpg" alt="Page 94"></div>
+        <div class="page"><img src="img/images_95.jpg" alt="Page 95"></div>
+    </div>
 </div>
-<script type="text/javascript" src="https://lehoangdung0609.github.io/sachdientu2/js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript" src="https://lehoangdung0609.github.io/sachdientu2/js/jquery.min.js"></script>
-<script type="text/javascript" src="https://lehoangdung0609.github.io/sachdientu2/js/pdf.min.js"></script>
-<script type="text/javascript" src="https://lehoangdung0609.github.io/sachdientu2/js/turn.js"></script>
-<script>
-    $(".magazine").turn({gradients: true, acceleration: true});
-</script>
-
-<script type="text/javascript" src="js/site.js"></script>
+<script src="js/site.js"></script>
 </body>
 </html>
