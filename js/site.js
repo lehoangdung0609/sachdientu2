@@ -13,17 +13,21 @@ $(function () {
     var screenRatio = screenWidth / screenHeight;
 
     var flipbookWidth, flipbookHeight;
-
-    if (pdfRatio > screenRatio) {
-        flipbookWidth = screenWidth;
-        flipbookHeight = screenWidth / pdfRatio;
-    } else {
-        flipbookHeight = availableHeight;
-        flipbookWidth = availableHeight * pdfRatio;
-    }
-
     var isMobile = window.innerWidth <= 768;
     var displayMode = isMobile ? 'single' : 'double';
+
+    if (isMobile) {
+        flipbookHeight = screenHeight * (2/3);
+        flipbookWidth = flipbookHeight * pdfRatio; // Duy trì tỷ lệ khung hình
+    } else {
+        if (pdfRatio > screenRatio) {
+            flipbookWidth = screenWidth;
+            flipbookHeight = screenWidth / pdfRatio;
+        } else {
+            flipbookHeight = availableHeight;
+            flipbookWidth = availableHeight * pdfRatio;
+        }
+    }
 
     $("#flipbook").turn({
         width: flipbookWidth,
