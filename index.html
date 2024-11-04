@@ -6,12 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="mobile-web-app-capable" content="yes">
-
-    <!-- Thêm universal links cho iOS -->
-    <meta property="al:ios:https://lehoangdung0609.github.io/sachdientu2/" content="https://lehoangdung0609.github.io/sachdientu2/">
-    <meta property="al:android:https://lehoangdung0609.github.io/sachdientu2/" content="https://lehoangdung0609.github.io/sachdientu2/">
-    <meta property="al:web:https://lehoangdung0609.github.io/sachdientu2/" content="https://lehoangdung0609.github.io/sachdientu2/">
-    
     <title>Book Viewer</title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://hammerjs.github.io/dist/hammer.min.js"></script>
@@ -86,22 +80,6 @@
     </style>
 </head>
 <body>
-<div id="browser-alert" style="display: none; position: fixed; top: 0; left: 0; right: 0; background: #f44336; color: white; padding: 15px; text-align: center; z-index: 9999;">
-    Để có trải nghiệm tốt nhất, vui lòng mở trang web này trong trình duyệt.
-    <button onclick="openInBrowser()" style="margin-left: 10px; padding: 5px 10px;">Mở trong trình duyệt</button>
-</div>
-
-<script>
-    function openInBrowser() {
-        window.location.href = window.location.href;
-    }
-
-    // Hiển thị thông báo nếu đang trong webview
-    if (isInWebView() && !isStandardBrowser()) {
-        document.getElementById('browser-alert').style.display = 'block';
-    }
-</script>
-
 <div class="magazine-viewport">
     <div class="magazine" id="flipbook">
         <div class="page"><img src="img/images_0.jpg" alt="Page 0"></div>
