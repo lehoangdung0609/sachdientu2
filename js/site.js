@@ -24,8 +24,10 @@ $(function () {
 
         if (openExternalBrowser) {
             if (isIOS()) {
-                // Mở trong Safari trên iOS
-                window.location.href = "https://" + window.location.hostname + window.location.pathname;
+                // Chuyển hướng sang Safari trên iOS
+                setTimeout(() => {
+                    window.open(window.location.href, '_blank');
+                }, 500);
             } else if (isAndroid()) {
                 // Mở trong Chrome trên Android
                 window.open(window.location.href, '_blank');
