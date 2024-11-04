@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Book Viewer</title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://hammerjs.github.io/dist/hammer.min.js"></script>
@@ -20,6 +23,12 @@
             background-repeat: no-repeat; /* Prevent repeating */
             background-position: center; /* Center the background image */
             overflow: hidden; /* Prevent scrolling */
+            /*thêm fix lỗi back chuyển trình duyệt của ưng dụng*/
+            overscroll-behavior-x: none;
+            overflow-x: hidden;
+            position: fixed;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
         }
 
         .magazine-viewport {
