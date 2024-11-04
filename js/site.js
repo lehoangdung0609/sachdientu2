@@ -20,7 +20,7 @@ $(function () {
     }
 
     if (isEmbeddedBrowser()) {
-        const openExternalBrowser = confirm("Để có trải nghiệm tốt nhất, vui lòng mở link này trong trình duyệt mặc định của bạn. Nhấn OK để mở.");
+        const openExternalBrowser = confirm("Để có trải nghiệm tốt nhất, vui lòng mở link này trong trình duyệt mặc định của bạn. Nhấn Đồng ý để mở, nếu không mở được vui lòng copy link.");
 
         if (openExternalBrowser) {
             if (isIOS()) {
