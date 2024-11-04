@@ -1,18 +1,36 @@
 $(function () {
     function isEmbeddedBrowser() {
-        const userAgent = navigator.userAgent;
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         const embeddedAgents = [
             "FBAN", // Facebook for iOS
             "FBAV", // Facebook for Android
             "Instagram",
-            "Zalo", // Zalo (có thể không chính xác hoàn toàn)
-            "Mozilla/5.0 (Linux; Android ...)" // Thêm User Agent cụ thể của Zalo nếu bạn tìm được
+            "Zalo", // Zalo
         ];
+
         return embeddedAgents.some(agent => userAgent.includes(agent));
     }
 
+    function isIOS() {
+        return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    function isAndroid() {
+        return /Android/i.test(navigator.userAgent);
+    }
+
     if (isEmbeddedBrowser()) {
-        window.open(window.location.href, '_blank');
+        const openExternalBrowser = confirm("Để có trải nghiệm tốt nhất, vui lòng mở link này trong trình duyệt mặc định của bạn. Nhấn OK để mở.");
+
+        if (openExternalBrowser) {
+            if (isIOS()) {
+                // Mở trong Safari trên iOS
+                window.location.href = "https://" + window.location.hostname + window.location.pathname;
+            } else if (isAndroid()) {
+                // Mở trong Chrome trên Android
+                window.open(window.location.href, '_blank');
+            }
+        }
     } 
     
     var pdfWidth = 1200; // Thay bằng chiều rộng thực tế của PDF
