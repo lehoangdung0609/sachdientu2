@@ -19,9 +19,10 @@ $(function () {
         return /Android/i.test(navigator.userAgent);
     }
 
-    if (isEmbeddedBrowser()) {
+    if (isEmbeddedBrowser() && !sessionStorage.getItem('externalBrowserPromptShown')) {
         const openExternalBrowser = confirm("Để có trải nghiệm tốt nhất, vui lòng mở link này trong trình duyệt mặc định của bạn. Nhấn Đồng ý để mở, nếu không mở được vui lòng copy link.");
-
+        // Lưu trạng thái người dùng đã nhìn thấy hộp thoại vào sessionStorage
+        sessionStorage.setItem('externalBrowserPromptShown', 'true');
         if (openExternalBrowser) {
             if (isIOS()) {
                 // Chuyển hướng sang Safari trên iOS
@@ -33,7 +34,19 @@ $(function () {
                 window.open(window.location.href, '_blank');
             }
         }
-    } 
+    }
+
+    // Quản lý hành vi "Back" trên iOS mà không chặn vuốt
+    if (isIOS()) {
+        // Đẩy một state vào lịch sử để ngăn việc quay lại
+        window.history.pushState(null, null, window.location.href);
+
+        // Lắng nghe sự kiện "popstate" (khi người dùng cố quay lại)
+        window.onpopstate = function() {
+            // Khi họ cố quay lại, ta đẩy lại state vào lịch sử để ngăn việc quay lại
+            window.history.pushState(null, null, window.location.href);
+        };
+    }
     
     var pdfWidth = 1200; // Thay bằng chiều rộng thực tế của PDF
     var pdfHeight = 800; // Thay bằng chiều cao thực tế của PDF
