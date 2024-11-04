@@ -63,6 +63,7 @@ $(function () {
         $('#flipbook').turn('next');
     });
     hammertime.on('swiperight', function(ev) {
+        ev.preventDefault(); // Ngăn chặn hành vi mặc định của trình duyệt
         $('#flipbook').turn('previous');
     });
     
