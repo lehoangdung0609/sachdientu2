@@ -26,7 +26,7 @@ $(function () {
             if (isIOS()) {
                 // Chuyển hướng sang Safari trên iOS
                 setTimeout(() => {
-                    window.open(window.location.href, '_blank');
+                    window.location.replace("https://" + window.location.hostname + window.location.pathname);
                 }, 500);
             } else if (isAndroid()) {
                 // Mở trong Chrome trên Android
