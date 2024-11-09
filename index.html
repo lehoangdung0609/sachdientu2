@@ -44,7 +44,12 @@
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Maintain aspect ratio of the images */
+            object-fit: fit; /* Maintain aspect ratio of the images */
+        }
+        @media (max-width: 1024px) {
+            .page img {
+                object-fit: contain; /* Áp dụng cho mobile và iPad */
+            }
         }
 
         #loading-screen {
