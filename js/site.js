@@ -48,22 +48,22 @@ $(function () {
         };
     }
     
-    var pdfWidth = 1200; // Thay bằng chiều rộng thực tế của PDF
-    var pdfHeight = 800; // Thay bằng chiều cao thực tế của PDF
+    let pdfWidth = 1200; // Thay bằng chiều rộng thực tế của PDF
+    let pdfHeight = 800; // Thay bằng chiều cao thực tế của PDF
 
-    var screenWidth = window.innerWidth;
-    var screenHeight = window.innerHeight;
+    let screenWidth = window.innerWidth;
+    let screenHeight = window.innerHeight;
 
-    var margin = 0.05; // 5% không gian ở đầu và cuối
+    let margin = 0.05; // 5% không gian ở đầu và cuối
 
-    var availableHeight = screenHeight - (screenHeight * margin * 2); // Chiều cao khả dụng sau khi để lại margin
+    let availableHeight = screenHeight - (screenHeight * margin * 2); // Chiều cao khả dụng sau khi để lại margin
 
-    var pdfRatio = pdfWidth / pdfHeight;
-    var screenRatio = screenWidth / screenHeight;
+    let pdfRatio = pdfWidth / pdfHeight;
+    let screenRatio = screenWidth / screenHeight;
 
-    var flipbookWidth, flipbookHeight;
-    var isMobile = window.innerWidth <= 768;
-    var displayMode = isMobile ? 'single' : 'double';
+    let flipbookWidth, flipbookHeight;
+    let isMobile = window.innerWidth <= 768;
+    let displayMode = isMobile ? 'single' : 'double';
 
     if (isMobile) {
         flipbookHeight = screenHeight * (2/3);
@@ -90,13 +90,13 @@ $(function () {
             }
         },
         tap: function(event) {
-            var flipbook = $(this);
+            let flipbook = $(this);
             if (flipbook.turn('page') == 1) {
                 flipbook.turn('next'); // Lật sang trang tiếp theo nếu đang ở trang đầu
             } else if (flipbook.turn('page') == flipbook.turn('pages')){
                 flipbook.turn('previous'); // Lật về trang trước nếu đang ở trang cuối
             } else {
-                var isRight = (event.pageX - flipbook.offset().left) > flipbook.width()/2;
+                let isRight = (event.pageX - flipbook.offset().left) > flipbook.width()/2;
                 if (isRight) {
                     flipbook.turn('next');
                 } else {
@@ -107,7 +107,7 @@ $(function () {
         }
     });
 
-    var hammertime = new Hammer(document.getElementById('flipbook')); // Sử dụng Hammer.js
+    let hammertime = new Hammer(document.getElementById('flipbook')); // Sử dụng Hammer.js
     hammertime.on('swipeleft', function(ev) {
         $('#flipbook').turn('next');
     });
