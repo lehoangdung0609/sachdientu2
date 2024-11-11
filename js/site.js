@@ -115,5 +115,76 @@ $(function () {
         ev.preventDefault(); // Ngăn chặn hành vi mặc định của trình duyệt
         $('#flipbook').turn('previous');
     });
+
+
+    // Phóng to/thu nhỏ
+    let flipbook = $("#flipbook");
+    let isZoomed = false;
+    let zoomScale = 2;
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
+
+    flipbook.on('dblclick', function() {
+        isZoomed = !isZoomed;
+        if (isZoomed) {
+            $(this).css('transform', `scale(${zoomScale})`);
+            $(this).css('transform-origin', 'center center');
+        } else {
+            $(this).css('transform', 'scale(1)');
+            // Reset lại vị trí khi thu nhỏ
+            $(this).css('left', '0');
+            $(this).css('top', '0');
+        }
+    });
+
+    flipbook.on('mousedown', function(e) {
+        if (isZoomed) {
+            isDragging = true;
+            startX = e.pageX;
+            startY = e.pageY;
+            initialLeft = parseInt($(this).css('left')) || 0;
+            initialTop = parseInt($(this).css('top')) || 0;
+            $(this).css('cursor', 'grabbing');
+            $(this).addClass('grabbing');
+        }
+    });
+
+    $(document).on('mousemove', function(e) {
+        if (isZoomed && isDragging) {
+            let deltaX = e.pageX - startX;
+            let deltaY = e.pageY - startY;
+            flipbook.css('left', initialLeft + deltaX + 'px');
+            flipbook.css('top', initialTop + deltaY + 'px');
+        }
+    });
+
+    $(document).on('mouseup', function() {
+        if (isZoomed) {
+            isDragging = false;
+            flipbook.css('cursor', 'grab');
+            flipbook.removeClass('grabbing');
+        }
+    });
+
+    $(document).on('mousemove', function(e) {
+        if (isZoomed && isDragging) {
+            let deltaX = e.pageX - startX;
+            let deltaY = e.pageY - startY;
+            let newLeft = initialLeft + deltaX;
+            let newTop = initialTop + deltaY;
+
+            // Giới hạn di chuyển để ảnh không bị ra khỏi vùng nhìn
+            let maxLeft = 0;
+            let maxTop = 0;
+            let minLeft = flipbook.parent().width() - flipbook.width() * zoomScale;
+            let minTop = flipbook.parent().height() - flipbook.height() * zoomScale;
+
+            newLeft = Math.min(maxLeft, Math.max(minLeft, newLeft));
+            newTop = Math.min(maxTop, Math.max(minTop, newTop));
+
+            flipbook.css('left', newLeft + 'px');
+            flipbook.css('top', newTop + 'px');
+        }
+    });
     
 });
