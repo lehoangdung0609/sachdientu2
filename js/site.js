@@ -106,7 +106,7 @@ $(function () {
 
         }
     });
-
+    
     let hammertime = new Hammer(document.getElementById('flipbook')); // Sử dụng Hammer.js
     hammertime.on('swipeleft', function(ev) {
         $('#flipbook').turn('next');
@@ -125,6 +125,18 @@ $(function () {
     let startX, startY, initialLeft, initialTop;
     let translateX = 0, translateY = 0;
     let slider = $("#pageSlider");
+
+    // Thêm biến để theo dõi thời gian giữa các lần chạm
+    let lastTap = 0;
+    let touchZoomScale = 1;
+    let touchStartDistance = 0;
+    let initialTouchZoomScale = 1;
+
+    // Thêm các biến để xử lý pan (di chuyển) trên mobile
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    let touchTranslateX = 0;
+    let touchTranslateY = 0;
 
     // Cập nhật giá trị của slider khi trang thay đổi
     flipbook.on('turning', function(event, page, view) {
@@ -156,7 +168,98 @@ $(function () {
     });
 
     /*test zoom trên mobile ipad*/
-    // Double-tap to Zoom
+    // Xử lý double tap để zoom
+    flipbook.on('touchend', function(e) {
+        let currentTime = new Date().getTime();
+        let tapLength = currentTime - lastTap;
+
+        if (tapLength < 300 && tapLength > 0) {
+            // Double tap detected
+            isZoomed = !isZoomed;
+            if (isZoomed) {
+                touchZoomScale = 2;
+                $(this).css('transform', `scale(${touchZoomScale})`);
+                $(this).css('transform-origin', 'center center');
+            } else {
+                touchZoomScale = 1;
+                $(this).css('transform', 'scale(1)');
+                touchTranslateX = 0;
+                touchTranslateY = 0;
+                $(this).css('left', '0');
+                $(this).css('top', '0');
+            }
+            e.preventDefault();
+        }
+        lastTap = currentTime;
+    });
+
+// Xử lý pinch zoom
+    flipbook.on('touchstart', function(e) {
+        if (e.touches.length === 2) {
+            // Tính khoảng cách ban đầu giữa 2 ngón tay
+            touchStartDistance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+            initialTouchZoomScale = touchZoomScale;
+        } else if (e.touches.length === 1 && isZoomed) {
+            // Lưu vị trí touch ban đầu cho pan
+            lastTouchX = e.touches[0].pageX;
+            lastTouchY = e.touches[0].pageY;
+        }
+    });
+
+    flipbook.on('touchmove', function(e) {
+        if (e.touches.length === 2) {
+            // Xử lý pinch zoom
+            e.preventDefault();
+            const distance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+
+            touchZoomScale = initialTouchZoomScale * (distance / touchStartDistance);
+            touchZoomScale = Math.min(Math.max(1, touchZoomScale), 3); // Giới hạn zoom từ 1x đến 3x
+
+            $(this).css('transform', `scale(${touchZoomScale}) translate(${touchTranslateX}px, ${touchTranslateY}px)`);
+        } else if (e.touches.length === 1 && isZoomed) {
+            // Xử lý pan khi đã zoom
+            e.preventDefault();
+            const touch = e.touches[0];
+            const deltaX = touch.pageX - lastTouchX;
+            const deltaY = touch.pageY - lastTouchY;
+
+            touchTranslateX += deltaX;
+            touchTranslateY += deltaY;
+
+            // Giới hạn khoảng di chuyển
+            const maxTranslate = 100 * touchZoomScale;
+            touchTranslateX = Math.min(Math.max(-maxTranslate, touchTranslateX), maxTranslate);
+            touchTranslateY = Math.min(Math.max(-maxTranslate, touchTranslateY), maxTranslate);
+
+            $(this).css('transform', `scale(${touchZoomScale}) translate(${touchTranslateX}px, ${touchTranslateY}px)`);
+
+            lastTouchX = touch.pageX;
+            lastTouchY = touch.pageY;
+        }
+    });
+
+    document.body.addEventListener('touchmove', function(e) {
+        if (isZoomed) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Reset zoom khi orientation change
+    $(window).on('orientationchange', function() {
+        isZoomed = false;
+        touchZoomScale = 1;
+        touchTranslateX = 0;
+        touchTranslateY = 0;
+        flipbook.css('transform', 'scale(1)');
+        flipbook.css('left', '0');
+        flipbook.css('top', '0');
+    });
     
 
     /**** end test zoom trên mobile ipad ****/
