@@ -156,48 +156,43 @@ $(function () {
     });
 
     /*test zoom trên mobile ipad*/
+    // Double-tap to Zoom
+    hammertime.on('doubletap', function() {
+        isZoomed = !isZoomed;
+        if (isZoomed) {
+            flipbook.css('transform', `scale(${zoomScale})`);
+            flipbook.css('transform-origin', 'center center');
+        } else {
+            flipbook.css('transform', 'scale(1)');
+            flipbook.css('left', '0').css('top', '0');
+            translateX = 0;
+            translateY = 0;
+        }
+    });
+    
     flipbook.on('touchstart', function(e) {
-        if (e.touches && e.touches.length === 2) {
-            isZoomed = !isZoomed;
-            if (isZoomed) {
-                $(this).css('transform', `scale(${zoomScale})`);
-                $(this).css('transform-origin', 'center center');
-            } else {
-                $(this).css('transform', 'scale(1)');
-                // Reset lại vị trí khi thu nhỏ
-                $(this).css('left', '0');
-                $(this).css('top', '0');
+        if (isZoomed) {
+            if (e.touches.length === 1) {
+                // Chuẩn bị cho hành động kéo ảnh với 1 ngón tay
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                initialLeft = translateX;
+                initialTop = translateY;
+                isDragging = true;
             }
         }
     });
 
     flipbook.on('touchmove', function(e) {
-        if (isZoomed && e.touches.length === 1) {
+        if (isZoomed && isDragging && e.touches.length === 1) {
             let deltaX = e.touches[0].clientX - startX;
             let deltaY = e.touches[0].clientY - startY;
 
-            // Cập nhật vị trí translate cho ảnh
-            translateX += deltaX;
-            translateY += deltaY;
+            // Cập nhật vị trí translate cho ảnh, đảm bảo giới hạn để không ra khỏi vùng hiển thị
+            translateX = Math.min(0, Math.max(initialLeft + deltaX, flipbook.parent().width() - flipbook.width() * zoomScale));
+            translateY = Math.min(0, Math.max(initialTop + deltaY, flipbook.parent().height() - flipbook.height() * zoomScale));
 
-            // Đặt lại transform với giá trị mới
             flipbook.css('transform', `scale(${zoomScale}) translate(${translateX}px, ${translateY}px)`);
-
-            // Cập nhật tọa độ bắt đầu để tính khoảng cách cho lần di chuyển tiếp theo
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-
-            // Giới hạn di chuyển để ảnh không bị ra khỏi vùng nhìn
-            let maxLeft = 0;
-            let maxTop = 0;
-            let minLeft = flipbook.parent().width() - flipbook.width() * zoomScale;
-            let minTop = flipbook.parent().height() - flipbook.height() * zoomScale;
-
-            let newLeft = Math.min(maxLeft, Math.max(minLeft, translateX));
-            let newTop = Math.min(maxTop, Math.max(minTop, translateY));
-
-            flipbook.css('left', newLeft + 'px');
-            flipbook.css('top', newTop + 'px');
         }
     });
 
