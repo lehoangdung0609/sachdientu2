@@ -22,8 +22,30 @@
             overflow: hidden; /* Prevent scrolling */
         }
 
-        .magazine-viewport {
+        .nav-button {
             position: absolute;
+            top: 50%;
+            transform: translateY(-50%); /* Đặt nút ở giữa theo chiều dọc */
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.5); /* Nền trong suốt */
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 10; /* Đảm bảo nút nằm trên flipbook */
+            border-radius: 5px; /* Bo tròn góc nút */
+            z-index: 10; /* Đảm bảo nút nằm trên flipbook và viewport */
+        }
+
+        .prev-button {
+            left: 10px; /* Cách mép trái một khoảng */
+        }
+
+        .next-button {
+            right: 10px; /* Cách mép phải một khoảng */
+        }
+
+        .magazine-viewport {
+            position: relative; /* Để các nút absolute hoạt động chính xác */
             top: 0;
             left: 0;
             width: 100%;
@@ -31,11 +53,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 1; /* Đảm bảo viewport có z-index thấp hơn nút */
         }
 
         .magazine {
             margin: 0 auto; /* Center the magazine */
             cursor: grab; /* Hiển thị con trỏ tay nắm khi có thể zoom */
+            z-index: 2; /* Có thể cần thiết nếu bạn có các phần tử khác chồng lên flipbook */
         }
 
         .magazine.grabbing {
@@ -54,6 +78,9 @@
         @media (max-width: 768px) {
             .page img {
                 object-fit: contain; /* Áp dụng cho mobile và iPad */
+            }
+            .nav-button {
+                display: none;
             }
         }
 
@@ -186,6 +213,8 @@
         <div class="page"><img src="img/images_94.jpg" alt="Page 94"></div>
         <div class="page"><img src="img/images_95.jpg" alt="Page 95"></div>
     </div>
+    <button id="prev-button" class="nav-button prev-button">&lt;</button>
+    <button id="next-button" class="nav-button next-button">&gt;</button>
 </div>
 <script src="js/site.js"></script>
 </body>

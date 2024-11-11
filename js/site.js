@@ -196,5 +196,13 @@ $(function () {
             flipbook.css('top', newTop + 'px');
         }
     });
+
+    $("#prev-button").on("click", function() {
+        flipbook.turn("previous");
+    });
+
+    $("#next-button").on("click", function() {
+        flipbook.turn("next");
+    });
     
 });
