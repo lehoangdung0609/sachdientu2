@@ -155,6 +155,95 @@ $(function () {
         }
     });
 
+    /*test zoom trên mobile ipad*/
+    flipbook.on('touchstart', function(e) {
+        if (e.touches && e.touches.length === 2) {
+            isZoomed = !isZoomed;
+            if (isZoomed) {
+                $(this).css('transform', `scale(${zoomScale})`);
+                $(this).css('transform-origin', 'center center');
+            } else {
+                $(this).css('transform', 'scale(1)');
+                // Reset lại vị trí khi thu nhỏ
+                $(this).css('left', '0');
+                $(this).css('top', '0');
+            }
+        }
+    });
+
+    flipbook.on('touchmove', function(e) {
+        if (isZoomed && e.touches.length === 1) {
+            let deltaX = e.touches[0].clientX - startX;
+            let deltaY = e.touches[0].clientY - startY;
+
+            // Cập nhật vị trí translate cho ảnh
+            translateX += deltaX;
+            translateY += deltaY;
+
+            // Đặt lại transform với giá trị mới
+            flipbook.css('transform', `scale(${zoomScale}) translate(${translateX}px, ${translateY}px)`);
+
+            // Cập nhật tọa độ bắt đầu để tính khoảng cách cho lần di chuyển tiếp theo
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+
+            // Giới hạn di chuyển để ảnh không bị ra khỏi vùng nhìn
+            let maxLeft = 0;
+            let maxTop = 0;
+            let minLeft = flipbook.parent().width() - flipbook.width() * zoomScale;
+            let minTop = flipbook.parent().height() - flipbook.height() * zoomScale;
+
+            let newLeft = Math.min(maxLeft, Math.max(minLeft, translateX));
+            let newTop = Math.min(maxTop, Math.max(minTop, translateY));
+
+            flipbook.css('left', newLeft + 'px');
+            flipbook.css('top', newTop + 'px');
+        }
+    });
+
+    $(document).on('touchend', function() {
+        if (isZoomed) {
+            isDragging = false;
+            flipbook.css('cursor', 'grab');
+            flipbook.removeClass('grabbing');
+        }
+    });
+
+    flipbook.on('gesturestart', function(e) {
+        if (e.originalEvent.touches.length === 2) {
+            isZoomed = !isZoomed;
+            if (isZoomed) {
+                $(this).css('transform', `scale(${zoomScale})`);
+                $(this).css('transform-origin', 'center center');
+            } else {
+                $(this).css('transform', 'scale(1)');
+                // Reset lại vị trí khi thu nhỏ
+                $(this).css('left', '0');
+                $(this).css('top', '0');
+            }
+        }
+    });
+
+    flipbook.on('gesturechange', function(e) {
+        if (isZoomed && e.originalEvent.touches.length === 1) {
+            let deltaX = e.originalEvent.touches[0].clientX - startX;
+            let deltaY = e.originalEvent.touches[0].clientY - startY;
+
+            // Cập nhật vị trí translate cho ảnh
+            translateX += deltaX;
+            translateY += deltaY;
+
+            // Đặt lại transform với giá trị mới
+            flipbook.css('transform', `scale(${zoomScale}) translate(${translateX}px, ${translateY}px)`);
+
+            // Cập nhật tọa độ bắt đầu để tính khoảng cách cho lần di chuyển tiếp theo
+            startX = e.originalEvent.touches[0].clientX;
+            startY = e.originalEvent.touches[0].clientY;
+        }
+    });
+
+    /**** end test zoom trên mobile ipad ****/
+
     flipbook.on('mousedown', function(e) {
         if (isZoomed) {
             isDragging = true;
