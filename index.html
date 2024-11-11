@@ -80,7 +80,21 @@
                 object-fit: contain; /* Áp dụng cho mobile và iPad */
             }
             .nav-button {
-                display: none;
+                display: block; /* Hiển thị nút trên di động */
+                width: 50px; /* Điều chỉnh kích thước nút */
+                height: 50px;
+                font-size: 20px; /* Tăng kích thước chữ cho dễ nhìn */
+                padding: 0; /* Loại bỏ padding để nút nhỏ lại */
+            }
+            .prev-button {
+                left: 10px;
+                top: auto;
+                bottom: 10px; /* Đặt nút ở dưới cùng màn hình */
+            }
+            .next-button {
+                right: 10px;
+                top: auto;
+                bottom: 10px; /* Đặt nút ở dưới cùng màn hình */
             }
         }
 
