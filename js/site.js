@@ -169,7 +169,7 @@ $(function () {
 
     /*test zoom trên mobile ipad*/
     // Xử lý double tap để zoom
-    flipbook.on('touchend', function(e) {
+    /*flipbook.on('touchend', function(e) {
         let currentTime = new Date().getTime();
         let tapLength = currentTime - lastTap;
 
@@ -193,7 +193,7 @@ $(function () {
         lastTap = currentTime;
     });
 
-// Xử lý pinch zoom
+    // Xử lý pinch zoom
     flipbook.on('touchstart', function(e) {
         if (e.touches.length === 2) {
             // Tính khoảng cách ban đầu giữa 2 ngón tay
@@ -207,7 +207,7 @@ $(function () {
             lastTouchX = e.touches[0].pageX;
             lastTouchY = e.touches[0].pageY;
         }
-    });
+    });*/
 
     flipbook.on('touchmove', function(e) {
         if (e.touches.length === 2) {
