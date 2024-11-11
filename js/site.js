@@ -123,6 +123,7 @@ $(function () {
     let zoomScale = 2;
     let isDragging = false;
     let startX, startY, initialLeft, initialTop;
+    let translateX = 0, translateY = 0;
 
     flipbook.on('dblclick', function() {
         isZoomed = !isZoomed;
@@ -153,8 +154,17 @@ $(function () {
         if (isZoomed && isDragging) {
             let deltaX = e.pageX - startX;
             let deltaY = e.pageY - startY;
-            flipbook.css('left', initialLeft + deltaX + 'px');
-            flipbook.css('top', initialTop + deltaY + 'px');
+
+            // Cập nhật vị trí translate cho ảnh
+            translateX += deltaX;
+            translateY += deltaY;
+
+            // Đặt lại transform với giá trị mới
+            flipbook.css('transform', `scale(${zoomScale}) translate(${translateX}px, ${translateY}px)`);
+
+            // Cập nhật tọa độ bắt đầu để tính khoảng cách cho lần di chuyển tiếp theo
+            startX = e.pageX;
+            startY = e.pageY;
         }
     });
 
