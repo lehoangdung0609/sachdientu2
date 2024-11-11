@@ -109,11 +109,15 @@ $(function () {
     
     let hammertime = new Hammer(document.getElementById('flipbook')); // Sử dụng Hammer.js
     hammertime.on('swipeleft', function(ev) {
-        $('#flipbook').turn('next');
+        if (!isZoomed) {
+            $('#flipbook').turn('next');
+        }
     });
     hammertime.on('swiperight', function(ev) {
-        ev.preventDefault(); // Ngăn chặn hành vi mặc định của trình duyệt
-        $('#flipbook').turn('previous');
+        if (!isZoomed) {
+            ev.preventDefault();
+            $('#flipbook').turn('previous');
+        }
     });
 
 
@@ -137,6 +141,9 @@ $(function () {
     let lastTouchY = 0;
     let touchTranslateX = 0;
     let touchTranslateY = 0;
+    // Thêm biến để theo dõi vị trí ban đầu của touch
+    let touchInitialLeft = 0;
+    let touchInitialTop = 0;
 
     // Cập nhật giá trị của slider khi trang thay đổi
     flipbook.on('turning', function(event, page, view) {
@@ -169,78 +176,126 @@ $(function () {
 
     /*test zoom trên mobile ipad*/
     // Xử lý double tap để zoom
-    /*flipbook.on('touchend', function(e) {
+    flipbook.on('touchend', function(e) {
+        let touches = e.originalEvent.touches;
+
+        if (isZoomed) {
+            touchInitialLeft = parseInt($(this).css('left')) || 0;
+            touchInitialTop = parseInt($(this).css('top')) || 0;
+        }
+
+        // Xử lý double tap
         let currentTime = new Date().getTime();
         let tapLength = currentTime - lastTap;
 
         if (tapLength < 300 && tapLength > 0) {
-            // Double tap detected
             isZoomed = !isZoomed;
             if (isZoomed) {
                 touchZoomScale = 2;
-                $(this).css('transform', `scale(${touchZoomScale})`);
-                $(this).css('transform-origin', 'center center');
+                $(this).css({
+                    'transform': `scale(${touchZoomScale})`,
+                    'transform-origin': 'center center'
+                });
             } else {
                 touchZoomScale = 1;
-                $(this).css('transform', 'scale(1)');
+                $(this).css({
+                    'transform': 'scale(1)',
+                    'left': '0',
+                    'top': '0'
+                });
                 touchTranslateX = 0;
                 touchTranslateY = 0;
-                $(this).css('left', '0');
-                $(this).css('top', '0');
             }
             e.preventDefault();
         }
         lastTap = currentTime;
     });
 
+    // Thêm CSS để cải thiện hiệu suất và ngăn chặn các hành vi mặc định
+    $('#flipbook').css({
+        'touch-action': 'none',
+        '-webkit-user-select': 'none',
+        'user-select': 'none',
+        'position': 'relative'
+    });
+
+// Ngăn chặn scroll trang khi đang zoom
+    document.body.addEventListener('touchmove', function(e) {
+        if (isZoomed) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    flipbook.on('touchstart', function(e) {
+        if (isZoomed) {
+            $(this).addClass('dragging');
+        }
+    });
+
+    flipbook.on('touchend', function(e) {
+        $(this).removeClass('dragging');
+    });
+
     // Xử lý pinch zoom
     flipbook.on('touchstart', function(e) {
-        if (e.touches.length === 2) {
-            // Tính khoảng cách ban đầu giữa 2 ngón tay
+        let touches = e.originalEvent.touches;
+
+        if (touches.length === 2) {
+            // Xử lý pinch zoom
             touchStartDistance = Math.hypot(
-                e.touches[0].pageX - e.touches[1].pageX,
-                e.touches[0].pageY - e.touches[1].pageY
+                touches[0].pageX - touches[1].pageX,
+                touches[0].pageY - touches[1].pageY
             );
             initialTouchZoomScale = touchZoomScale;
-        } else if (e.touches.length === 1 && isZoomed) {
-            // Lưu vị trí touch ban đầu cho pan
-            lastTouchX = e.touches[0].pageX;
-            lastTouchY = e.touches[0].pageY;
+        } else if (touches.length === 1 && isZoomed) {
+            e.preventDefault();
+            // Lưu vị trí touch ban đầu
+            lastTouchX = touches[0].pageX;
+            lastTouchY = touches[0].pageY;
+            touchInitialLeft = parseInt($(this).css('left')) || 0;
+            touchInitialTop = parseInt($(this).css('top')) || 0;
         }
-    });*/
+    });
 
     flipbook.on('touchmove', function(e) {
-        if (e.touches.length === 2) {
+        let touches = e.originalEvent.touches;
+
+        if (touches.length === 2) {
             // Xử lý pinch zoom
             e.preventDefault();
             const distance = Math.hypot(
-                e.touches[0].pageX - e.touches[1].pageX,
-                e.touches[0].pageY - e.touches[1].pageY
+                touches[0].pageX - touches[1].pageX,
+                touches[0].pageY - touches[1].pageY
             );
 
             touchZoomScale = initialTouchZoomScale * (distance / touchStartDistance);
-            touchZoomScale = Math.min(Math.max(1, touchZoomScale), 3); // Giới hạn zoom từ 1x đến 3x
+            touchZoomScale = Math.min(Math.max(1, touchZoomScale), 3);
 
-            $(this).css('transform', `scale(${touchZoomScale}) translate(${touchTranslateX}px, ${touchTranslateY}px)`);
-        } else if (e.touches.length === 1 && isZoomed) {
-            // Xử lý pan khi đã zoom
+            $(this).css('transform', `scale(${touchZoomScale})`);
+        } else if (touches.length === 1 && isZoomed) {
             e.preventDefault();
-            const touch = e.touches[0];
+            const touch = touches[0];
             const deltaX = touch.pageX - lastTouchX;
             const deltaY = touch.pageY - lastTouchY;
 
-            touchTranslateX += deltaX;
-            touchTranslateY += deltaY;
+            // Tính toán vị trí mới
+            let newLeft = touchInitialLeft + deltaX;
+            let newTop = touchInitialTop + deltaY;
 
             // Giới hạn khoảng di chuyển
-            const maxTranslate = 100 * touchZoomScale;
-            touchTranslateX = Math.min(Math.max(-maxTranslate, touchTranslateX), maxTranslate);
-            touchTranslateY = Math.min(Math.max(-maxTranslate, touchTranslateY), maxTranslate);
+            const maxLeft = $(window).width() * 0.5;
+            const maxTop = $(window).height() * 0.5;
+            const minLeft = -$(window).width() * 0.5;
+            const minTop = -$(window).height() * 0.5;
 
-            $(this).css('transform', `scale(${touchZoomScale}) translate(${touchTranslateX}px, ${touchTranslateY}px)`);
+            newLeft = Math.min(maxLeft, Math.max(minLeft, newLeft));
+            newTop = Math.min(maxTop, Math.max(minTop, newTop));
 
-            lastTouchX = touch.pageX;
-            lastTouchY = touch.pageY;
+            // Áp dụng vị trí mới
+            $(this).css({
+                'left': newLeft + 'px',
+                'top': newTop + 'px'
+            });
         }
     });
 

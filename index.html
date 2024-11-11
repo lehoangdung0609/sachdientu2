@@ -158,6 +158,18 @@
             background: #3937FF;
             cursor: pointer;
         }
+
+        #flipbook {
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+            position: relative;
+            /*transition: transform 0.3s ease;*/
+        }
+
+        #flipbook.dragging {
+            transition: none;
+        }
     </style>
 </head>
 <body>
