@@ -162,49 +162,24 @@ $(function () {
     slider.attr('max', flipbook.turn('pages'));
 
     flipbook.on('dblclick', function() {
-        isZoomed = !isZoomed;
-        if (isZoomed) {
-            $(this).css('transform', `scale(${zoomScale})`);
-            $(this).css('transform-origin', 'center center');
+        if (!isZoomed) {
+            $("#zoom-in-button").click();
         } else {
-            $(this).css('transform', 'scale(1)');
-            // Reset lại vị trí khi thu nhỏ
-            $(this).css('left', '0');
-            $(this).css('top', '0');
+            $("#zoom-out-button").click();
         }
     });
 
     /*test zoom trên mobile ipad*/
     // Xử lý double tap để zoom
     flipbook.on('touchend', function(e) {
-        let touches = e.originalEvent.touches;
-
-        if (isZoomed) {
-            touchInitialLeft = parseInt($(this).css('left')) || 0;
-            touchInitialTop = parseInt($(this).css('top')) || 0;
-        }
-
-        // Xử lý double tap
         let currentTime = new Date().getTime();
         let tapLength = currentTime - lastTap;
 
         if (tapLength < 300 && tapLength > 0) {
-            isZoomed = !isZoomed;
-            if (isZoomed) {
-                touchZoomScale = 2;
-                $(this).css({
-                    'transform': `scale(${touchZoomScale})`,
-                    'transform-origin': 'center center'
-                });
+            if (!isZoomed) {
+                $("#zoom-in-button").click();
             } else {
-                touchZoomScale = 1;
-                $(this).css({
-                    'transform': 'scale(1)',
-                    'left': '0',
-                    'top': '0'
-                });
-                touchTranslateX = 0;
-                touchTranslateY = 0;
+                $("#zoom-out-button").click();
             }
             e.preventDefault();
         }
@@ -314,6 +289,9 @@ $(function () {
         flipbook.css('transform', 'scale(1)');
         flipbook.css('left', '0');
         flipbook.css('top', '0');
+        // Reset trạng thái nút
+        $("#zoom-in-button").prop('disabled', false).css('opacity', '1');
+        $("#zoom-out-button").prop('disabled', true).css('opacity', '0.5');
     });
     
 
@@ -385,5 +363,54 @@ $(function () {
     $("#next-button").on("click", function() {
         flipbook.turn("next");
     });
+
+    // Thêm xử lý cho nút zoom in
+    $("#zoom-in-button").on("click", function(e) {
+        e.preventDefault();
+        if (!isZoomed) {
+            isZoomed = true;
+            if (isMobile) {
+                touchZoomScale = 2;
+                flipbook.css({
+                    'transform': `scale(${touchZoomScale})`,
+                    'transform-origin': 'center center'
+                });
+            } else {
+                flipbook.css({
+                    'transform': `scale(${zoomScale})`,
+                    'transform-origin': 'center center'
+                });
+            }
+            // Disable nút zoom in
+            $(this).prop('disabled', true).css('opacity', '0.5');
+            // Enable nút zoom out
+            $("#zoom-out-button").prop('disabled', false).css('opacity', '1');
+        }
+    });
+
+// Thêm xử lý cho nút zoom out
+    $("#zoom-out-button").on("click", function(e) {
+        e.preventDefault();
+        if (isZoomed) {
+            isZoomed = false;
+            if (isMobile) {
+                touchZoomScale = 1;
+            }
+            flipbook.css({
+                'transform': 'scale(1)',
+                'left': '0',
+                'top': '0'
+            });
+            touchTranslateX = 0;
+            touchTranslateY = 0;
+            // Enable nút zoom in
+            $("#zoom-in-button").prop('disabled', false).css('opacity', '1');
+            // Disable nút zoom out
+            $(this).prop('disabled', true).css('opacity', '0.5');
+        }
+    });
+
+// Cập nhật trạng thái ban đầu của nút zoom out
+    $("#zoom-out-button").prop('disabled', true).css('opacity', '0.5');
     
 });

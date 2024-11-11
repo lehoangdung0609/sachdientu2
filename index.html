@@ -44,6 +44,32 @@
             right: 10px; /* Cách mép phải một khoảng */
         }
 
+        .zoom-button {
+            position: absolute;
+            top: 10px;
+            padding: 10px 15px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 10;
+            border-radius: 5px;
+            font-size: 18px; /* Tăng kích thước chữ cho dễ nhìn */
+            transition: background-color 0.3s ease; /* Thêm hiệu ứng chuyển màu */
+        }
+
+        .zoom-button:hover {
+            background-color: rgba(0, 0, 0, 0.8); /* Đổi màu khi hover */
+        }
+
+        .zoom-in-button {
+            left: 10px; /* Cách mép trái một khoảng */
+        }
+
+        .zoom-out-button {
+            right: 10px; /* Cách mép phải một khoảng */
+        }
+
         .magazine-viewport {
             position: relative; /* Để các nút absolute hoạt động chính xác */
             top: 0;
@@ -96,6 +122,25 @@
                 right: 10px;
                 top: auto;
                 bottom: 5%; /* Đặt nút ở dưới cùng màn hình */
+            }
+            .zoom-button {
+                position: absolute;
+                top: 10px; /* Position from the top edge */
+                padding: 10px 15px;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: white;
+                border: none;
+                cursor: pointer;
+                z-index: 10;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+            .zoom-in-button {
+                left: 10px;
+            }
+            .zoom-out-button {
+                right: 10px;
+                margin-left: 60px; /* Tạo khoảng cách giữa 2 nút zoom trên di động */
             }
         }
 
@@ -276,6 +321,8 @@
            style="width: 80%; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;">
     <button id="prev-button" class="nav-button prev-button">&lt;</button>
     <button id="next-button" class="nav-button next-button">&gt;</button>
+    <button id="zoom-in-button" class="zoom-button zoom-in-button">+</button>
+    <button id="zoom-out-button" class="zoom-button zoom-out-button">-</button>
 </div>
 <script src="js/site.js"></script>
 </body>
