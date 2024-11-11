@@ -124,6 +124,23 @@ $(function () {
     let isDragging = false;
     let startX, startY, initialLeft, initialTop;
     let translateX = 0, translateY = 0;
+    let slider = $("#pageSlider");
+
+    // Cập nhật giá trị của slider khi trang thay đổi
+    flipbook.on('turning', function(event, page, view) {
+        slider.val(page);
+    });
+
+    // Thay đổi trang khi giá trị của slider thay đổi
+    slider.on('input', function() {
+        let page = parseInt($(this).val());
+        if (page >= 1 && page <= flipbook.turn('pages')) {
+            flipbook.turn('page', page);
+        }
+    });
+
+    // Đảm bảo rằng giá trị tối đa của slider được cập nhật nếu số trang thay đổi
+    slider.attr('max', flipbook.turn('pages'));
 
     flipbook.on('dblclick', function() {
         isZoomed = !isZoomed;
