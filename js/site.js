@@ -123,8 +123,9 @@ $(function () {
 
     // Phóng to/thu nhỏ
     let flipbook = $("#flipbook");
+    let zoomLevel = 1; // Mức zoom hiện tại (1: bình thường, 2: 2x, 3: 3x, 4:4x)
     let isZoomed = false;
-    let zoomScale = 2;
+    let zoomScales = [1, 2, 3, 4]; // Mảng chứa các mức zoom
     let isDragging = false;
     let startX, startY, initialLeft, initialTop;
     let translateX = 0, translateY = 0;
@@ -145,9 +146,35 @@ $(function () {
     let touchInitialLeft = 0;
     let touchInitialTop = 0;
 
+    let currentTranslateX = 0;
+    let currentTranslateY = 0;
+
     // Cập nhật giá trị của slider khi trang thay đổi
     flipbook.on('turning', function(event, page, view) {
         slider.val(page);
+    });
+
+    let autoFlipInterval = null; // Khởi tạo bằng null
+
+    $("#auto-flip-button").on("click", function(e) { // Thêm e để xử lý event
+        e.preventDefault();
+
+        if (autoFlipInterval === null) { // Sử dụng autoFlipInterval
+            autoFlipInterval = setInterval(function() {
+                if (flipbook.turn('page') < flipbook.turn('pages')) { // Kiểm tra xem đã đến trang cuối chưa
+                    flipbook.turn("next");
+                } else {
+                    clearInterval(autoFlipInterval); // Dừng interval khi đến trang cuối
+                    autoFlipInterval = null;
+                    $(this).text("Tự động"); // Đặt lại text của button
+                }
+            }, 3500); // Chuyển trang sau 2 giây
+            $(this).text("Dừng tự động");
+        } else {
+            clearInterval(autoFlipInterval);
+            autoFlipInterval = null;
+            $(this).text("Tự động");
+        }
     });
 
     // Thay đổi trang khi giá trị của slider thay đổi
@@ -194,7 +221,7 @@ $(function () {
         'position': 'relative'
     });
 
-// Ngăn chặn scroll trang khi đang zoom
+    // Ngăn chặn scroll trang khi đang zoom
     document.body.addEventListener('touchmove', function(e) {
         if (isZoomed) {
             e.preventDefault();
@@ -257,17 +284,20 @@ $(function () {
             let newLeft = touchInitialLeft + deltaX;
             let newTop = touchInitialTop + deltaY;
 
-            // Giới hạn khoảng di chuyển
-            const maxLeft = $(window).width() * 0.5;
-            const maxTop = $(window).height() * 0.5;
-            const minLeft = -$(window).width() * 0.5;
-            const minTop = -$(window).height() * 0.5;
+            // Giới hạn khoảng di chuyển dựa trên kích thước flipbook sau khi zoom
+            const zoomedWidth = flipbookWidth * touchZoomScale;
+            const zoomedHeight = flipbookHeight * touchZoomScale;
+
+            const maxLeft = (zoomedWidth - flipbookWidth) / 2;
+            const maxTop = (zoomedHeight - flipbookHeight) / 2;
+            const minLeft = -maxLeft;
+            const minTop = -maxTop;
 
             newLeft = Math.min(maxLeft, Math.max(minLeft, newLeft));
             newTop = Math.min(maxTop, Math.max(minTop, newTop));
 
             // Áp dụng vị trí mới
-            $(this).css({
+            flipbook.css({
                 'left': newLeft + 'px',
                 'top': newTop + 'px'
             });
@@ -318,8 +348,10 @@ $(function () {
             translateX += deltaX;
             translateY += deltaY;
 
+            let scale = zoomScales[zoomLevel - 1]; // Lấy scale hiện tại
+
             // Đặt lại transform với giá trị mới
-            flipbook.css('transform', `scale(${zoomScale}) translate(${translateX}px, ${translateY}px)`);
+            flipbook.css('transform', `scale(${scale}) translate(${translateX}px, ${translateY}px)`);
 
             // Cập nhật tọa độ bắt đầu để tính khoảng cách cho lần di chuyển tiếp theo
             startX = e.pageX;
@@ -367,50 +399,77 @@ $(function () {
     // Thêm xử lý cho nút zoom in
     $("#zoom-in-button").on("click", function(e) {
         e.preventDefault();
-        if (!isZoomed) {
-            isZoomed = true;
-            if (isMobile) {
-                touchZoomScale = 2;
-                flipbook.css({
-                    'transform': `scale(${touchZoomScale})`,
-                    'transform-origin': 'center center'
-                });
-            } else {
-                flipbook.css({
-                    'transform': `scale(${zoomScale})`,
-                    'transform-origin': 'center center'
-                });
-            }
-            // Disable nút zoom in
-            $(this).prop('disabled', true).css('opacity', '0.5');
-            // Enable nút zoom out
-            $("#zoom-out-button").prop('disabled', false).css('opacity', '1');
+        if (zoomLevel < 4) { // Kiểm tra xem đã đạt mức zoom tối đa chưa
+            zoomLevel++;
+            applyZoom(zoomLevel); // Áp dụng mức zoom mới
         }
     });
 
 // Thêm xử lý cho nút zoom out
     $("#zoom-out-button").on("click", function(e) {
         e.preventDefault();
-        if (isZoomed) {
-            isZoomed = false;
-            if (isMobile) {
-                touchZoomScale = 1;
-            }
-            flipbook.css({
-                'transform': 'scale(1)',
-                'left': '0',
-                'top': '0'
-            });
-            touchTranslateX = 0;
-            touchTranslateY = 0;
-            // Enable nút zoom in
-            $("#zoom-in-button").prop('disabled', false).css('opacity', '1');
-            // Disable nút zoom out
-            $(this).prop('disabled', true).css('opacity', '0.5');
+        if (zoomLevel > 1) {  // Kiểm tra xem đã đạt mức zoom tối thiểu chưa
+            zoomLevel--;
+            applyZoom(zoomLevel); // Áp dụng mức zoom mới
         }
     });
 
-// Cập nhật trạng thái ban đầu của nút zoom out
+    // Hàm áp dụng mức zoom
+    function applyZoom(level) {
+        let scale = zoomScales[level - 1];
+        if (isMobile) {
+            touchZoomScale = scale; // Cập nhật touchZoomScale cho mobile
+        }
+
+        // Lưu vị trí hiện tại trước khi thay đổi mức zoom
+        if (isMobile) {
+            //  Đối với mobile, bạn có thể dùng touchTranslateX và touchTranslateY
+            currentTranslateX = parseInt(flipbook.css('left')) || 0;
+            currentTranslateY = parseInt(flipbook.css('top')) || 0;
+            // Hoặc có thể dùng  matrix để tính toán chính xác hơn
+        } else {
+            currentTranslateX = translateX;
+            currentTranslateY = translateY;
+        }
+
+        // Áp dụng lại vị trí đã lưu sau khi thay đổi mức zoom
+        if (isMobile) {
+            flipbook.css({
+                'left': currentTranslateX + 'px',
+                'top': currentTranslateY + 'px'
+            });
+        } else {
+            // Tính toán lại translateX và translateY dựa trên scale mới
+            translateX = currentTranslateX;
+            translateY = currentTranslateY;
+
+            flipbook.css('transform', `scale(${scale}) translate(${translateX}px, ${translateY}px)`);
+        }
+
+        // Cập nhật trạng thái nút (tùy chọn)
+        if (level === 4) {
+            $("#zoom-in-button").prop('disabled', true).css('opacity', '0.5');
+        } else {
+            $("#zoom-in-button").prop('disabled', false).css('opacity', '1');
+        }
+        if (level === 1) {
+            $("#zoom-out-button").prop('disabled', true).css('opacity', '0.5');
+            isZoomed = false; // Đặt isZoomed về false khi zoom out hoàn toàn
+            flipbook.css('left', '0'); // Reset vị trí left và top
+            flipbook.css('top', '0');
+        } else {
+            $("#zoom-out-button").prop('disabled', false).css('opacity', '1');
+            isZoomed = true; // Đặt isZoomed về true khi đang zoom
+        }
+
+        // Reset translate khi thay đổi mức zoom
+        translateX = 0;
+        translateY = 0;
+        flipbook.css('transform', `scale(${scale})`); // Áp dụng lại transform
+
+    }
+
+    // Cập nhật trạng thái ban đầu của nút zoom out
     $("#zoom-out-button").prop('disabled', true).css('opacity', '0.5');
     
 });
