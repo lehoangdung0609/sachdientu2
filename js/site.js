@@ -85,6 +85,7 @@ $(function () {
         display: displayMode,
         gradients: true, // Thêm tùy chọn gradients
         elevation: 200, // Để tạo cảm giác nổi cho trang khi lật
+        shadows: true,
         when: {
             ready: function() {
                 $(this).turn('peel', 'br'); // Lật trang đầu tiên về bên phải
@@ -153,6 +154,25 @@ $(function () {
     // Cập nhật giá trị của slider khi trang thay đổi
     flipbook.on('turning', function(event, page, view) {
         slider.val(page);
+        let currentPage = flipbook.turn('page');
+        let nextPage = currentPage + 1;
+        let prevPage = currentPage - 1;
+
+        if (view === 1) {
+            if (page === nextPage) {
+                flipbook.turn('page', nextPage).css('transform', 'rotateY(10deg)');
+            } else if (page === prevPage) {
+                flipbook.turn('page', prevPage).css('transform', 'rotateY(-10deg)');
+            }
+        } else if (view === 2) {
+            if (page === nextPage) {
+                flipbook.turn('page', nextPage).css('transform', 'rotateY(10deg)');
+                flipbook.turn('page', prevPage).css('transform', 'rotateY(-10deg)');
+            } else if (page === prevPage) {
+                flipbook.turn('page', prevPage).css('transform', 'rotateY(-10deg)');
+                flipbook.turn('page', nextPage).css('transform', 'rotateY(10deg)');
+            }
+        }
     });
 
     let autoFlipInterval = null; // Khởi tạo bằng null

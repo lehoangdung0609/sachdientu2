@@ -87,6 +87,13 @@
             margin: 0 auto; /* Center the magazine */
             cursor: grab; /* Hiển thị con trỏ tay nắm khi có thể zoom */
             z-index: 2; /* Có thể cần thiết nếu bạn có các phần tử khác chồng lên flipbook */
+            perspective: 1000px;
+            elevation: 200;
+        }
+
+        .magazine .page-turn {
+            transform-origin: center;
+            transition: transform 0.5s ease-in-out;
         }
 
         .magazine.grabbing {
@@ -94,7 +101,7 @@
         }
 
         .page {
-            background-color: white; /* White background for pages */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
         .page img {
