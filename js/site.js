@@ -84,6 +84,7 @@ $(function () {
         autoCenter: true,
         display: displayMode,
         gradients: true, // Thêm tùy chọn gradients
+        elevation: 200, // Để tạo cảm giác nổi cho trang khi lật
         when: {
             ready: function() {
                 $(this).turn('peel', 'br'); // Lật trang đầu tiên về bên phải
