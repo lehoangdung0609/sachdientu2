@@ -89,6 +89,21 @@
             z-index: 2; /* Có thể cần thiết nếu bạn có các phần tử khác chồng lên flipbook */
             perspective: 1000px;
             elevation: 200;
+            position: relative; /* Thêm position relative */
+        }
+
+        /* Thêm nếp gấp giữa hai trang */
+        .magazine::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background-color: rgba(0, 0, 0, 0.2);
+            z-index: 3;
+            transform: translateX(-50%);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
 
         .magazine .page-turn {
@@ -102,6 +117,32 @@
 
         .page {
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Thêm bóng đổ cho trang trái */
+        .page:nth-child(odd)::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 20%;
+            background: linear-gradient(to left, rgba(0, 0, 0, 0.2), transparent);
+            z-index: 2;
+        }
+
+        /* Thêm bóng đổ cho trang phải */
+        .page:nth-child(even)::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 20%;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent);
+            z-index: 2;
         }
 
         .page img {
@@ -110,6 +151,14 @@
             object-fit: fit; /* Maintain aspect ratio of the images */
         }
         @media (max-width: 768px) {
+            .magazine::after {
+                display: none; /* Ẩn nếp gấp trên thiết bị di động */
+            }
+
+            .page::after {
+                display: none; /* Ẩn bóng đổ trên thiết bị di động */
+            }
+            
             .page img {
                 object-fit: contain; /* Áp dụng cho mobile và iPad */
             }
