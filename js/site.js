@@ -125,9 +125,9 @@ $(function () {
 
     // Phóng to/thu nhỏ
     let flipbook = $("#flipbook");
-    let zoomLevel = 1; // Mức zoom hiện tại (1: bình thường, 2: 2x, 3: 3x, 4:4x)
+    let zoomLevel = 1; // Mức zoom hiện tại (1: bình thường, 2: 2x, 3: 3x, 4:4x, 5: 5x)
     let isZoomed = false;
-    let zoomScales = [1, 2, 3, 4]; // Mảng chứa các mức zoom
+    let zoomScales = [1, 2, 3, 4, 5]; // Mảng chứa các mức zoom
     let isDragging = false;
     let startX, startY, initialLeft, initialTop;
     let translateX = 0, translateY = 0;
@@ -420,7 +420,7 @@ $(function () {
     // Thêm xử lý cho nút zoom in
     $("#zoom-in-button").on("click", function(e) {
         e.preventDefault();
-        if (zoomLevel < 4) { // Kiểm tra xem đã đạt mức zoom tối đa chưa
+        if (zoomLevel < 5) { // Kiểm tra xem đã đạt mức zoom tối đa chưa
             zoomLevel++;
             applyZoom(zoomLevel); // Áp dụng mức zoom mới
         }
@@ -468,7 +468,7 @@ $(function () {
         }
 
         // Cập nhật trạng thái nút (tùy chọn)
-        if (level === 4) {
+        if (level === 5) {
             $("#zoom-in-button").prop('disabled', true).css('opacity', '0.5');
         } else {
             $("#zoom-in-button").prop('disabled', false).css('opacity', '1');
